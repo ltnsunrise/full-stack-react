@@ -1,5 +1,6 @@
 import { initDatabase } from './db/init.js'
 import { Post } from './db/models/post.js'
+
 initDatabase()
 
 const post = new Post({
