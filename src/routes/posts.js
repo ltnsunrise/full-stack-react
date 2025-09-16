@@ -3,6 +3,9 @@ import {
   listPostsByAuthor,
   listPostsByTag,
   getPostById,
+  updatePost,
+  deletePost,
+  createPost,
 } from '../services/posts.js'
 
 export async function postsRoutes(app) {
@@ -28,6 +31,18 @@ export async function postsRoutes(app) {
     }
   })
 
+  app.post('/api/v1/posts', async (req, res) => {
+    try {
+      console.log({ body: req.body })
+
+      const post = await createPost(req.body)
+      return res.json(post)
+    } catch (err) {
+      console.error('error creating post', err)
+      return res.status(500).end()
+    }
+  })
+
   app.get('/api/v1/posts/:id', async (req, res) => {
     const { id } = req.params
     try {
@@ -36,6 +51,27 @@ export async function postsRoutes(app) {
       return res.json(post)
     } catch (err) {
       console.error('error getting post', err)
+      return res.status(500).end()
+    }
+  })
+
+  app.patch('/api/v1/posts/:id', async (req, res) => {
+    try {
+      const post = await updatePost(req.params.id, req.body)
+      return res.json(post)
+    } catch (err) {
+      console.error('error updating post', err)
+      return res.status(500).end()
+    }
+  })
+
+  app.delete('/api/v1/posts/:id', async (req, res) => {
+    try {
+      const deleteCount = await deletePost(req.params.id)
+      if (deleteCount === 0) return res.status(404).end()
+      return res.status(204).end()
+    } catch (error) {
+      console.error('error deleting post', error)
       return res.status(500).end()
     }
   })
